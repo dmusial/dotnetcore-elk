@@ -1,0 +1,46 @@
+version: '2'
+
+services:
+    playgroundapp:
+        build:
+            context: ./PlaygroundApp
+            dockerfile: Dockerfile
+        ports:
+            - "5000:5000"
+        networks:
+            - playgroundnet
+        environment:
+            - ASPNETCORE_ENVIRONMENT=Development
+        logging:
+            driver: gelf
+            options:
+                gelf-address: "udp://192.168.99.100:12201"
+                tag: "app"
+
+    elasticsearch:
+        build: elasticsearch/
+        environment:
+            ES_JAVA_OPTS: -Xms1g -Xmx1g
+            xpack.security.enabled: "false"
+        ports:
+            - "9200"
+        networks:
+            - playgroundnet
+
+    logstash:
+        build: logstash/
+        command: logstash -f /etc/logstash/conf.d/logstash.conf
+        ports:
+          - "12201:12201/udp"
+        networks:
+            - playgroundnet
+
+    kibana:
+        build: kibana/
+        ports:
+            - "5601:5601"
+        networks:
+            - playgroundnet
+
+networks:
+    playgroundnet:

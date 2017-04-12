@@ -1,1 +1,1 @@
-Before "docker-compose up" make sure to run "sudo sysctl -w vm.max_map_count=262144" on the docker host (required by Elasticsearch)
+Before "docker-compose up" make sure to allocate at least 2GB RAM to the docker host and run "sudo sysctl -w vm.max_map_count=262144" on it (required by Elasticsearch)
